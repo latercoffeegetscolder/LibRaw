@@ -479,7 +479,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
     fseek(ifp, oAtom, SEEK_SET);
 	if (nesting == 0)
 	{
-	  memset(thdr, 0, 4);
       fread(thdr, 1, 4, ifp);
       fseek(ifp, oAtom, SEEK_SET);
 	}
@@ -557,7 +556,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
 	{
 		INT64 tt = ftell(ifp);
 		lHdr = 16ULL;
-		memset(UIID, 0, lHdr);
 		fread(UIID, 1, lHdr, ifp);
 		if (!memcmp(UIID, UUID_XMP, 16) && szAtom > 24LL && szAtom < 1024000LL)
 		{
@@ -569,7 +567,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
 		{
 			// read next 48 bytes, check for 'PRVW'
 			unsigned char xdata[32];
-			memset(xdata, 0, sizeof(xdata));
 			fread(xdata, 32, 1, ifp);	
 			if (!memcmp(xdata + 12, "PRVW", 4))
 			{
@@ -613,7 +610,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
     if (!strcmp(AtomNameStack, "moovuuid"))
     {
       lHdr = 16ULL;
-	  memset(UIID, 0, lHdr);
       fread(UIID, 1, lHdr, ifp);
       if (!strncmp(UIID, UIID_Canon, lHdr))
       {
@@ -643,7 +639,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
 	else if (!strcmp(AtomNameStack, "moovuuidTHMB") && szAtom > 24)
 	{
 		unsigned char xdata[16];
-		memset(xdata, 0, sizeof(xdata));
 		fread(xdata, 16, 1, ifp);
 		INT64 xoffset = ftell(ifp);
 		if (imgdata.thumbs_list.thumbcount < LIBRAW_THUMBNAIL_MAXCOUNT)
@@ -768,11 +763,8 @@ int LibRaw::parseCR3(UINT64 oAtomList,
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCMP1"))
     {
       INT64 read_size = szAtomContent > 85LL ? 85 : INT64(szAtomContent);
-	  if (szAtomContent >= 40)
-	  {
-		  memset(CMP1, 0, read_size);
-		  fread(CMP1, 1, size_t(read_size), ifp);
-	  }
+      if (szAtomContent >= 40)
+        fread(CMP1, 1, size_t(read_size), ifp);
       else
       {
         err = -7;
@@ -784,7 +776,6 @@ int LibRaw::parseCR3(UINT64 oAtomList,
 
     else if (!strcmp(AtomNameStack, "moovtrakmdiaminfstblstsdCRAWCDI1")) {
       if (szAtomContent >= 60) {
-		memset(CDI1, 0, 60);
         fread(CDI1, 1, 60, ifp);
         if (!strncmp((char *)CDI1+8, "IAD1", 4) && (sgetn(8, CDI1) == 0x38)) {
           // sensor area at CDI1+12, 4 16-bit values

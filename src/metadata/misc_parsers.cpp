@@ -166,8 +166,6 @@ void LibRaw::parse_qt(INT64 end)
   unsigned size;
   INT64 save;
   char tag[4];
-  if (libraw_internal_data.unpacker_data.CR3_Version-- < 1)
-	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
 
   order = 0x4d4d;
   while (ftell(ifp) + 7 < end)
@@ -279,7 +277,7 @@ void LibRaw::parse_rollei()
   memset(&t, 0, sizeof t);
   do
   {
-	memset(line, 0, sizeof(line));
+    line[0] = 0;
     if (!fgets(line, 128, ifp))
       break;
     line[127] = 0;
